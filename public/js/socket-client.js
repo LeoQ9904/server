@@ -2,7 +2,10 @@
 const lblOnline = document.querySelector('#lblOnline');
 const lblOffline = document.querySelector('#lblOffline');
 const txtMensaje = document.querySelector('#txtMensaje');
+const txtTo = document.querySelector('#txtTo');
 const btnEnviar = document.querySelector('#btnEnviar');
+const txtSoy = document.querySelector('#txtSoy');
+const btnSoy = document.querySelector('#btnSoy');
 
 const socket = io();
 
@@ -21,13 +24,24 @@ socket.on('enviar-mensaje', (payload) => {
     console.log( payload )
 })
 
+btnSoy.addEventListener('click',()=>{
+    const payload = {
+        mensaje : 'Restrandome',
+        id : txtSoy.value
+    }
+    socket.emit('registro', payload, (id)=>{
+        console.log('Registrando usuario con id ',id)
+    })
+})
+
 
 btnEnviar.addEventListener('click', ()=>{
     const mensaje = txtMensaje.value;
     const payload = {
         mensaje,
-        id: '123ABC',
-        fecha: new Date().getTime()
+        id: socket.id,
+        to: txtTo.value,
+        from: txtSoy.value
     }
     
     socket.emit( 'enviar-mensaje', payload, ( id ) => {

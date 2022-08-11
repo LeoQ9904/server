@@ -1,16 +1,21 @@
 const socketController = (socket)=>{
-  console.log('cliente conectado', socket.id);
-
+  console.log('cliente conectado');
+  console.log(socket.id)
   socket.on('disconnect',()=>{
-      console.log('Cliente desconetado', socket.id)
+      console.log('Cliente desconetado', socket)
+  })
+
+  socket.on('registro',(payload,callback)=>{
+    socket.join(payload.id)
+    callback(payload.id)
+    socket.emit('registro',payload)
   })
 
   socket.on('enviar-mensaje', ( payload, callback ) => {
-      
-      const id = 123456789;
-      callback( id );
+                
+      callback( socket.id );
 
-      socket.broadcast.emit('enviar-mensaje', payload );
+      socket.to(payload.to).emit('enviar-mensaje', payload );
 
   })
 }
