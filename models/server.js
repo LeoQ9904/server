@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const  fileUpload  = require('express-fileupload')
+const { socketController } = require('../controllers/socket');
 
 const {dbConnection} = require('../database/config');
 
@@ -8,6 +9,8 @@ class server {
     constructor(){
         this.app = express();
         this.port = process.env.PORT;
+        this.server = require('http').createServer( this.app );
+        this.io = require('socket.io')( this.server );        
         
         this.path = {
             user: '/api/user',
@@ -21,6 +24,7 @@ class server {
 
         this.coneccionDB();
         this.middlewares();
+        this.sockets();
         this.routes();    
     }
     async coneccionDB(){
@@ -45,10 +49,13 @@ class server {
        this.app.use(this.path.uploads, require('../routes/uploads'));
        this.app.use(this.path.producto, require('../routes/producto'));
        this.app.use(this.path.user, require('../routes/user'));
+    }    
+    sockets(){
+        this.io.on('connection', socketController)
     }
     listen(){        
         //puerto en el q se escucha
-        this.app.listen(this.port)
+        this.server.listen(this.port)
     }
 }
 
