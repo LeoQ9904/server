@@ -1,50 +1,53 @@
-const { response } = require("express");
-const jsonwebtoken = require("jsonwebtoken");
+const jsonwebtoken = require('jsonwebtoken');
 
+const {User} = require('../models');
 
-const User = require('../models/user');
-
-const validJWT = async (rq,rs,next) =>{
-    const token = rq.header('x-token');
+const validJWT = async (req,res,next)=>{
+    const token = req.header('x-token');
     if(!token){
-        return rs.status(401).json({
-            msg: 'no hay token en la petición'
-        });
+        return res.status(401).json({
+            info:'No tenemos un token en la petición'
+        })
     }
-
     try {
-        
-        const { uid }=jsonwebtoken.verify(token, process.env.SECRETORPTIVATEKEY);
-        
+        const {uid} = jsonwebtoken.verify(token, process.env.SECRETORPTIVATEKEY);
         //validar usuario
-        const user = await User.findById(uid);
-        if(!user){
-            return rs.status(400).json({
-                msg: 'Token no valido usuario no existe'
+        const usuario = await User.findById(uid);
+        if(!usuario){
+            return res.status(400).json({
+                info:'Token no valido, usuario no existe'
+            })
+        }
+        if(!usuario.estado){
+            return res.status(400).json({
+                info:'Token no valido usuario no disponible'
             })
         }
 
-        //validar estado de usuario, si esta eliminado no podria hcer nada
-        if(!user.estado){
-            return rs.status(400).json({
-                msg: 'Token no valido usuario en estado false'
-            })
-        }
-
-
-        rq.user=user;
-
-
+        req.usuario=usuario;
 
         next();
-    } catch (error) {
-        console.log(error);
-        rs.status(401).json({
-            msg: 'Token no valido'
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({
+            info:'Token no valido'
         })
     }
 }
 
-module.exports={
-    validJWT
+const validaRol = (...roles)=>{
+    return (req,res,next)=>{
+        if(!req.usuario){
+            return res.status(500).json({
+                info:'Se esta intentado rol sin validar usuario primero'
+            })
+        }
+        if(!roles.includes(req.usuario.rol)){
+            return res.status(400).json({
+                info:'El suario no tiene permiso'
+            })
+        }
+        next();
+    }
 }
+module.exports = {validJWT, validaRol};
