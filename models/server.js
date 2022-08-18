@@ -10,7 +10,11 @@ class server {
         this.app = express();
         this.port = process.env.PORT;
         this.server = require('http').createServer( this.app );
-        this.io = require('socket.io')( this.server );        
+        this.io = require('socket.io')( this.server, {
+            cors: {
+                origin: "*"
+            }
+        });        
         
         this.path = {
             user: '/api/user',
@@ -31,7 +35,7 @@ class server {
         await dbConnection();
     }
     middlewares(){
-        //Directorio public archivos que secargan
+        //Directorio public archivos que secargan    
         this.app.use(cors());
         this.app.use( express.json() );
         this.app.use( express.static('public'));
