@@ -28,7 +28,7 @@ router.post('/',[
 router.put('/:id',[
     check('id','No es un id válido').isMongoId(),
     check('id').custom( userPorIdExiste ),
-    check('rol').custom( esRoleValido ),
+    // check('rol').custom( esRoleValido ),
     validarCampos
 ], userPut)
 router.delete('/:id',[

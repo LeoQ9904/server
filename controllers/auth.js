@@ -93,7 +93,7 @@ const renovarToken = async (req,res) =>{
     const {usuario} = req;
      //generar token para la validacion de la informacion del usuario
 
-     const token = await generarJWT(usuario.id);
+    const token = await generarJWT(usuario.id);
     res.json({
         usuario,
         token

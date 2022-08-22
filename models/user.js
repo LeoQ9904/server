@@ -26,6 +26,10 @@ const schemaUser =  Schema({
         type: Boolean,
         default: true
     },
+    online: {
+        type: Boolean,
+        default: false
+    },
     google: {
         type: Boolean,
         default: false
