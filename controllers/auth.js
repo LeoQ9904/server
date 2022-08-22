@@ -12,7 +12,7 @@ const login = async (req=request, res=response) => {
     const {correo,password}=req.body;
 
     try {
-        const user  = await User.findOne({correo});
+        let user  = await User.findOne({correo});
         if(!user){
             return res.status(400).json({
                 msg: 'Usuario / password no son correctos - correo'
@@ -34,7 +34,8 @@ const login = async (req=request, res=response) => {
         
         //generar token JWT
 
-         const token = await generarJWT(user.id);
+        const token = await generarJWT(user.id);
+        user = await User.findOneAndUpdate({correo},{online:true})
 
         res.json({
             user,
