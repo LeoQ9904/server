@@ -57,10 +57,22 @@ const userDelete = async (req, res=response) => {
         user        
     })
 };
+const userIdGet = async(req=request,res=response)=>{
+    const {nombre} = req.params;
+
+    console.log(nombre)
+
+    const user = await User.findOne({nombre})
+
+    res.json({
+        user,
+    })
+}
 
 module.exports={
     userGet,
     userPut,
     userDelete,
-    userPost
+    userPost,
+    userIdGet
 }

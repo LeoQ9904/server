@@ -3,7 +3,7 @@ const {Router} = require('express');
 const { check } = require('express-validator');
 
 //controlador
-const { userGet, userPost, userDelete, userPut } = require('../controllers/user');
+const { userIdGet,userGet, userPost, userDelete, userPut } = require('../controllers/user');
 
 //helpers validaciones
 const { esRoleValido, emailExiste, userPorIdExiste } = require('../helpers/db-validacion');
@@ -14,7 +14,7 @@ const { esAdminrol, tieneRol, validJWT, validarCampos } = require('../middleware
 
 const router = Router();
 
-
+router.get('/:nombre',userIdGet)
 router.get('/', userGet)
 router.post('/',[
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
